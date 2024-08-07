@@ -1,0 +1,84 @@
+#Create database
+create database store;
+
+#Create tables
+create table countries (
+    code int primary key not null ,
+    name varchar(20) unique ,
+    continent_name varchar(20) not null
+);
+
+create table users(
+    id int primary key ,
+    full_name varchar(20) ,
+    email varchar(20) unique ,
+    gender char check ( gender='m' or gender='f' ),
+    date_of_birth varchar(15),
+    created_at datetime default CURRENT_TIMESTAMP,
+    country_code int,
+    foreign key (country_code) references countries(code)
+
+);
+
+create table orders (
+    id int primary key,
+    user_id int,
+    foreign key (user_id) references users(id),
+    status varchar(6) check ( status='start' or status = 'finish'),
+    created_at datetime default CURRENT_TIMESTAMP
+);
+
+create table order_products(
+    order_id int,
+    foreign key (order_id) references orders(id),
+    product_id int,
+    foreign key (product_id) references products(id),
+    quantity int default 0
+);
+
+create table products(
+    id int primary key ,
+    name varchar(10) not null ,
+    price int default 0,
+    status varchar(10) check ( status='valid' or status='expired' ),
+    created_at datetime default CURRENT_TIMESTAMP
+);
+
+
+#Insert data
+
+#countries table
+insert countries values (966,'Saudi Arabia','Asia');
+insert countries values (971,'United Arab Emirates','Asia');
+insert countries values (49,'Germany','Europe');
+
+
+#users table
+insert users values (1,'Abdulaziz Alshehri','Abdulaziz@gmail.com','m','15-05-1999',CURRENT_TIMESTAMP,966);
+insert users values (2,'Abdullah Ahmed','Abdullah@hotmail.com','m','28-03-1993',CURRENT_TIMESTAMP,966);
+insert users values (3,'Emma Anton','Emma@gmail.com','f','04-08-2003',CURRENT_TIMESTAMP,49);
+
+#orders table
+insert orders values (1,1,'start',current_timestamp);
+insert orders values (2,3,'finish',current_timestamp);
+insert orders values (3,2,'start',current_timestamp);
+
+
+#products table
+insert products values (1,'laptop HP',4000,'Valid',current_timestamp);
+insert products values (2,'MacBook',5000,'Valid',current_timestamp);
+insert products values (3,'Iphone 15',5500,'Valid',current_timestamp);
+insert products values (4,'SunGlass',250,'expired',current_timestamp);
+
+#order products table
+insert order_products values (1,1,2);
+insert order_products values (3,3,1);
+insert order_products values (2,1,2);
+insert order_products values (1,2,1);
+
+
+#update row
+update countries set countries.name = 'Kingdom of Saudi' where code=966;
+
+#delete row
+delete from products where id=4;
